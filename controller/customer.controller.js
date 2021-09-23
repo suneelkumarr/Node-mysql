@@ -55,27 +55,35 @@ exports.login = async (req, res) => {
           });
         }
       } else {
-        auth = await Customer.matchPassword(password, data.password);
+        const auth = await Customer.matchPassword(password, data.password);
         console.log(password);
         console.log(data.password);
         if (!auth) {
            return res.status(401).json({ err: "password not match" });
         }
       const payload = {
-        userId: data.customerId,
+        userId: data.id,
       };
       const token = jwt.sign({ payload }, process.env.SECRET_KEY, {
         expiresIn: "2h",
       });
+      console.log(token);
       // save user token
-      user.token = token;
-      await user.save();
-      return res.status(200).json({
-        success: true,
-        user,
-        authorization: req.authToken,
+      // user.token = token;
+      // await user.save();
+
+
+      Customer.update(data.id, {token}, (err, data) => {
+        if (err) {
+          res
+            .status(400)
+            .send({
+              message: err.message || "some error occured in save the details",
+            });
+        } else {
+          res.send(data);
+        }
       });
-        // return res.send(data);
       }
     });
   } catch (error) {
