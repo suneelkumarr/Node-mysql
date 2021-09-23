@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router()
+const {decode} = require('../middleware/jwt')
 
 const customer = require('../controller/customer.controller')
 
-router.get('/customers', customer.getAll);
-router.get("/customers/:customerId", customer.findOne);
+router.get('/customers', decode,customer.getAll);
+router.get("/customers/:customerId", decode, customer.findOne);
 router.post("/customers", customer.create);
 router.post("/login", customer.login);
-router.put("/customers/:customerId", customer.update);
-router.delete("/customers/:customerId", customer.delete);
-router.delete("/customers", customer.deleteAll);
+router.put("/customers/:customerId",decode, customer.update);
+router.delete("/customers/:customerId",decode, customer.delete);
+router.delete("/customers",decode, customer.deleteAll);
 
 
 module.exports =router;
